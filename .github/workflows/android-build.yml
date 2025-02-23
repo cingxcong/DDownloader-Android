@@ -40,13 +40,21 @@ jobs:
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
+      - name: Force Buildozer to Use Build-Tools 34.0.0
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools
+          ln -s $HOME/android-sdk/build-tools/34.0.0 $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0
+          echo "export ANDROID_NDK=$HOME/android-sdk/ndk/25.1.8937393" >> $HOME/.bashrc
+          echo "export PATH=$HOME/android-sdk/build-tools/34.0.0:$PATH" >> $HOME/.bashrc
+          source $HOME/.bashrc
+      
       - name: Initialize Buildozer
         run: buildozer init
       
       - name: Build APK
         run: |
           export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/34.0.0:$PATH
           buildozer -v android debug
       
       - name: Upload APK artifact
