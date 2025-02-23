@@ -40,13 +40,14 @@ jobs:
           yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
           $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Force Buildozer to Use Build-Tools 34.0.0
+      - name: Configure Buildozer to Use Correct SDK Path
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools
-          ln -s $HOME/android-sdk/build-tools/34.0.0 $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0
-          echo "export ANDROID_NDK=$HOME/android-sdk/ndk/25.1.8937393" >> $HOME/.bashrc
-          echo "export PATH=$HOME/android-sdk/build-tools/34.0.0:$PATH" >> $HOME/.bashrc
-          source $HOME/.bashrc
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk
+          ln -s $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager $HOME/.buildozer/android/platform/android-sdk/sdkmanager
+          echo "[app]" > buildozer.spec
+          echo "android.sdk_path = $HOME/android-sdk" >> buildozer.spec
+          echo "android.ndk_path = $HOME/android-sdk/ndk/25.1.8937393" >> buildozer.spec
+          echo "android.ndk_api = 21" >> buildozer.spec
       
       - name: Initialize Buildozer
         run: buildozer init
