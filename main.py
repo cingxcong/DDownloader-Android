@@ -1,30 +1,25 @@
-from kivy.app import App  
-from kivy.uix.boxlayout import BoxLayout  
-from kivy.uix.textinput import TextInput  
-from kivy.uix.button import Button  
-import subprocess  
+import pyshark
+import json
+import sys
 
-class DownloaderGUI(BoxLayout):  
-    def __init__(self, **kwargs):  
-        super().__init__(orientation='vertical', **kwargs)  
+def convert_pcap_to_json(pcap_file, output_file):
+    try:
+        cap = pyshark.FileCapture(pcap_file)
+        packets_list = [packet._json for packet in cap]
 
-        self.url_input = TextInput(hint_text="Enter URL", size_hint=(1, 0.2))  
-        self.add_widget(self.url_input)  
+        with open(output_file, "w") as f:
+            json.dump(packets_list, f, indent=4)
 
-        self.download_button = Button(text="Download", size_hint=(1, 0.2))  
-        self.download_button.bind(on_press=self.start_download)  
-        self.add_widget(self.download_button)  
+        print(f"Conversion complete. JSON saved as {output_file}")
+    except Exception as e:
+        print(f"Error: {e}")
 
-    def start_download(self, instance):  
-        url = self.url_input.text.strip()  
-        if not url:  
-            return  
-        command = f"python main.py --url {url}"  
-        subprocess.Popen(command, shell=True)  
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python convert_pcap.py input.pcap output.json")
+        sys.exit(1)
 
-class DownloaderApp(App):  
-    def build(self):  
-        return DownloaderGUI()  
+    input_pcap = sys.argv[1]
+    output_json = sys.argv[2]
 
-if __name__ == "__main__":  
-    DownloaderApp().run()
+    convert_pcap_to_json(input_pcap, output_json)
