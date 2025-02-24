@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y tshark
+          sudo apt install -y tshark wireshark-common
           pip install pyshark requests
 
       - name: Run PCAP to JSON Conversion
