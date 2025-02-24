@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to the latest version
 
       - name: Install dependencies
         run: |
@@ -25,7 +25,7 @@ jobs:
         run: python convert_pcap.py "${{ inputs.pcap_url }}" output.json
 
       - name: Upload JSON Output
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4  # Updated to v4
         with:
           name: converted-json
           path: output.json
