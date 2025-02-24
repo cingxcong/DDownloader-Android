@@ -1,26 +1,28 @@
-name: Convert PCAP to JSON
+name: Manual PCAP to JSON Converter
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      pcap_url:
+        description: "Paste the PCAP file URL"
+        required: true
 
 jobs:
   convert:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Python & Pyshark
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y tshark
-          pip install pyshark
+          pip install pyshark requests
 
-      - name: Run conversion
-        run: python convert_pcap.py input.pcap output.json
+      - name: Run PCAP to JSON Conversion
+        run: python convert_pcap.py "${{ inputs.pcap_url }}" output.json
 
       - name: Upload JSON Output
         uses: actions/upload-artifact@v3
