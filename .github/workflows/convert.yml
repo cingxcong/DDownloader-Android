@@ -1,0 +1,29 @@
+name: Convert PCAP to JSON
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Python & Pyshark
+        run: |
+          sudo apt update
+          sudo apt install -y tshark
+          pip install pyshark
+
+      - name: Run conversion
+        run: python convert_pcap.py input.pcap output.json
+
+      - name: Upload JSON Output
+        uses: actions/upload-artifact@v3
+        with:
+          name: converted-json
+          path: output.json
